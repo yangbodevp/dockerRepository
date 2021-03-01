@@ -13,3 +13,61 @@ services:
       - "/my/consul/data/server1:/consul/data"           # 挂载数据目录
       - "/my/consul/conf/server1:/consul/config"      # 挂载配置文件目录
     command: agent -server -bootstrap-expect=3 -ui -node=consul_server_1 -client='0.0.0.0' -data-dir /consul/data -config-dir /consul/config -datacenter=dc01
+    networks: 
+      extnetwork: 
+        ipv4_address: 172.19.0.1
+  server_2:
+    container_name: consul_server_2        # 指定容器的名称
+    image: consul                   # 指定镜像和版本
+    restart: always
+    privileged: true
+    ports:
+      - "8520:8500"
+    environment:
+      CONSUL_BIND_INTERFACE: eth0      
+    volumes:
+      - "/my/consul/data/server2:/consul/data"           # 挂载数据目录
+      - "/my/consul/conf/server2:/consul/config"      # 挂载配置文件目录
+    command: agent -server  -join=172.19.0.1 -ui -node=consul_server_2 -client='0.0.0.0' -data-dir /consul/data -config-dir /consul/config -datacenter=dc01 -rejoin
+    networks: 
+      extnetwork: 
+        ipv4_address: 172.19.0.2
+  server_3:
+    container_name: consul_server_3        # 指定容器的名称
+    image: consul                   # 指定镜像和版本
+    restart: always
+    privileged: true
+    ports:
+      - "8530:8500"
+    environment:
+      CONSUL_BIND_INTERFACE: eth0      
+    volumes:
+      - "/my/consul/data/server3:/consul/data"           # 挂载数据目录
+      - "/my/consul/conf/server3:/consul/config"      # 挂载配置文件目录
+    command: agent -server  -join=172.19.0.1 -ui -node=consul_server_3 -client='0.0.0.0' -data-dir /consul/data -config-dir /consul/config -datacenter=dc01 -rejoin
+    networks: 
+      extnetwork: 
+        ipv4_address: 172.19.0.3
+  client_1: 
+    container_name: consul_client_1        # 指定容器的名称
+    image: consul                   # 指定镜像和版本
+    restart: always
+    privileged: true
+    ports:
+      - "8500:8500"
+    environment:
+      CONSUL_BIND_INTERFACE: eth0      
+    volumes:
+      - "/my/consul/conf/client1:/consul/config"      # 挂载配置文件目录
+    command: agent -join=172.19.0.1 -node=consul_client_1 -client='0.0.0.0'  -config-dir /consul/config -datacenter=dc01
+    networks: 
+      extnetwork: 
+        ipv4_address: 172.19.0.4
+networks:
+   extnetwork:
+      ipam:
+         config:
+         - subnet: 172.19.0.0/16
+           gateway: 172.19.0.1   
+
+
