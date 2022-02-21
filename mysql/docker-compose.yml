@@ -10,6 +10,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+      TZ: "Asia/Shanghai"           #东八区
     volumes:
       - "${MYSQL_DIR}/data:/var/lib/mysql"           # 挂载数据目录
       - "${MYSQL_DIR}/config:/etc/mysql/conf.d"      # 挂载配置文件目录
